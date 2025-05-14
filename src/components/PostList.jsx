@@ -124,6 +124,30 @@ function PostList() {
     }));
   };
 
+  const handleBulkUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const posts = JSON.parse(text);
+
+      const response = await fetch(`${API_BASE_URL}/bulk-posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(posts),
+      });
+
+      if (!response.ok) throw new Error('Failed to upload posts');
+      const data = await response.json();
+      setPosts((prevPosts) => [...prevPosts, ...data]);
+      alert('Bulk posts uploaded successfully!');
+    } catch (err) {
+      console.error(err);
+      setError('Failed to upload bulk posts. Please ensure the file is valid.');
+    }
+  };
+
   if (loading) return <div className="loading-indicator">Loading posts...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -143,6 +167,15 @@ function PostList() {
           <Link to="/create" className="button primary-btn">
             + Create Post
           </Link>
+          <label className="button secondary-btn">
+            Bulk Upload
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleBulkUpload}
+              style={{ display: 'none' }}
+            />
+          </label>
         </form>
       </div>
 
