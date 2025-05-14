@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 function PostList() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,8 +16,8 @@ function PostList() {
   const fetchPosts = async (key = '') => {
     try {
       const endpoint = key
-        ? `${process.env.REACT_APP_API_BASE_URL}/posts/search?key=${encodeURIComponent(key)}` // Use environment variable
-        : `${process.env.REACT_APP_API_BASE_URL}/posts`; // Default endpoint
+        ? `${API_BASE_URL}/posts/search?key=${encodeURIComponent(key)}` // Use environment variable
+        : `${API_BASE_URL}/posts`; // Default endpoint
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
@@ -42,7 +44,7 @@ function PostList() {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts/${id}`, { 
+      const response = await fetch(`${API_BASE_URL}/posts/${id}`, { 
         method: 'DELETE' // Use environment variable
       });
       

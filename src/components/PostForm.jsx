@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 function PostForm() {
   const [post, setPost] = useState({
     title: '',
@@ -19,7 +21,7 @@ function PostForm() {
       const fetchPost = async () => {
         setLoading(true);
         try {
-          const response = await fetch(`/api/posts/${id}`);
+          const response = await fetch(`${API_BASE_URL}/api/posts/${id}`);
           if (!response.ok) throw new Error('Failed to fetch post');
           const data = await response.json();
           
@@ -72,8 +74,8 @@ function PostForm() {
 
     const method = id ? 'PUT' : 'POST';
     const url = id
-      ? `http://localhost:8080/miclat/posts/${id}` // Updated endpoint for editing
-      : 'http://localhost:8080/miclat/post'; // Updated endpoint for creating
+      ? `${API_BASE_URL}/miclat/posts/${id}`
+      : `${API_BASE_URL}/miclat/post`;
 
     try {
       const response = await fetch(url, {
