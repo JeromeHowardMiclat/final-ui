@@ -16,8 +16,8 @@ function PostList() {
   const fetchPosts = async (key = '') => {
     try {
       const endpoint = key
-        ? `${API_BASE_URL}/posts/search?key=${encodeURIComponent(key)}` // Use environment variable
-        : `${API_BASE_URL}/posts`; // Default endpoint
+        ? `${API_BASE_URL}/miclat/posts/search?key=${encodeURIComponent(key)}` // Use environment variable
+        : `${API_BASE_URL}/miclat/posts`; // Default endpoint
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
@@ -44,7 +44,7 @@ function PostList() {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     
     try {
-      const response = await fetch(`${API_BASE_URL}/posts/${id}`, { 
+      const response = await fetch(`${API_BASE_URL}/miclat/posts/${id}`, { 
         method: 'DELETE' // Use environment variable
       });
       
@@ -132,7 +132,7 @@ function PostList() {
       const text = await file.text();
       const posts = JSON.parse(text);
 
-      const response = await fetch(`${API_BASE_URL}/bulk-posts`, {
+      const response = await fetch(`${API_BASE_URL}/miclat/bulk-posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(posts),
