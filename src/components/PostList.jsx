@@ -167,15 +167,7 @@ function PostList() {
           <Link to="/create" className="button primary-btn">
             + Create Post
           </Link>
-          <label className="button secondary-btn">
-            Bulk Upload
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleBulkUpload}
-              style={{ display: 'none' }}
-            />
-          </label>
+         
         </form>
       </div>
 
