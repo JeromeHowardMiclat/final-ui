@@ -2,22 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = 'https://final-api-fpop.onrender.com';
 
 function PostList() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [searchKey, setSearchKey] = useState(''); // New state for search input
-  const [commentBoxVisible, setCommentBoxVisible] = useState({}); // Track visibility of comment boxes
-  const [likes, setLikes] = useState({}); // Track likes for each post
-  const [comments, setComments] = useState({}); // Track comments for each post
+  const [searchKey, setSearchKey] = useState('');
+  const [commentBoxVisible, setCommentBoxVisible] = useState({});
+  const [likes, setLikes] = useState({});
+  const [comments, setComments] = useState({});
 
   const fetchPosts = async (key = '') => {
     try {
       const endpoint = key
-        ? `${API_BASE_URL}/miclat/posts/search?key=${encodeURIComponent(key)}` // Use environment variable
-        : `${API_BASE_URL}/miclat/posts`; // Default endpoint
+        ? `${API_BASE_URL}/miclat/posts/search?key=${encodeURIComponent(key)}`
+        : `${API_BASE_URL}/miclat/posts`;
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
@@ -42,12 +42,12 @@ function PostList() {
 
   const deletePost = async (id) => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
-    
+
     try {
-      const response = await fetch(`${API_BASE_URL}/miclat/posts/${id}`, { 
-        method: 'DELETE' // Use environment variable
+      const response = await fetch(`${API_BASE_URL}/miclat/posts/${id}`, {
+        method: 'DELETE'
       });
-      
+
       if (!response.ok) throw new Error('Failed to delete post');
       setPosts(posts.filter((post) => post.id !== id));
     } catch (err) {
@@ -59,7 +59,6 @@ function PostList() {
   const renderMedia = (post) => {
     if (!post.mediaUrl) return null;
 
-    // Default to 'image' if mediaType is not provided
     const mediaType = post.mediaType || (post.mediaUrl.includes('youtube') || post.mediaUrl.includes('youtu.be') ? 'video' : 'image');
 
     if (mediaType === 'image') {
@@ -117,7 +116,7 @@ function PostList() {
   };
 
   const handlePostComment = (id, comment) => {
-    if (!comment.trim()) return; // Ignore empty comments
+    if (!comment.trim()) return;
     setComments((prevComments) => ({
       ...prevComments,
       [id]: [...(prevComments[id] || []), comment],
@@ -164,10 +163,7 @@ function PostList() {
             className="search-input"
           />
           <button type="submit" className="button search-btn">Search</button>
-          <Link to="/create" className="button primary-btn">
-            + Create Post
-          </Link>
-         
+          <Link to="/create" className="button primary-btn">+ Create Post</Link>
         </form>
       </div>
 
@@ -175,16 +171,14 @@ function PostList() {
         {posts.length === 0 ? (
           <div className="empty-feed">
             <p>No posts yet. Be the first to share something!</p>
-            <Link to="/create" className="button primary-btn">
-              Create your first post
-            </Link>
+            <Link to="/create" className="button primary-btn">Create your first post</Link>
           </div>
         ) : (
           posts.map((post) => (
             <article key={post.id} className="post-card">
               <div className="post-header">
                 <div className="post-author">
-                  <span className="author-name">{post.author || 'Anonymous'}</span> {/* Display author */}
+                  <span className="author-name">{post.author || 'Anonymous'}</span>
                   <span className="post-time">
                     {post.createdAt
                       ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
@@ -196,22 +190,15 @@ function PostList() {
               <div className="post-content">
                 <h2>{post.title}</h2>
                 <p>{post.content}</p>
-                
                 {renderMedia(post)}
               </div>
 
               <div className="post-actions">
                 <div className="action-group">
-                  <button
-                    className="button like-btn"
-                    onClick={() => handleLike(post.id)}
-                  >
+                  <button className="button like-btn" onClick={() => handleLike(post.id)}>
                     <span>👍</span> Like ({likes[post.id] || 0})
                   </button>
-                  <button
-                    className="button comment-btn"
-                    onClick={() => toggleCommentBox(post.id)}
-                  >
+                  <button className="button comment-btn" onClick={() => toggleCommentBox(post.id)}>
                     <span>💬</span> Comment
                   </button>
                 </div>
@@ -225,7 +212,7 @@ function PostList() {
                         if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
                           handlePostComment(post.id, e.target.value);
-                          e.target.value = ''; // Clear the textarea
+                          e.target.value = '';
                         }
                       }}
                     ></textarea>
@@ -234,7 +221,7 @@ function PostList() {
                       onClick={(e) => {
                         const textarea = e.target.previousSibling;
                         handlePostComment(post.id, textarea.value);
-                        textarea.value = ''; // Clear the textarea
+                        textarea.value = '';
                       }}
                     >
                       Post Comment
@@ -243,18 +230,8 @@ function PostList() {
                 )}
 
                 <div className="action-group">
-                  <Link 
-                    to={`/edit/${post.id}`} 
-                    className="button secondary-btn"
-                  >
-                    Edit
-                  </Link>
-                  <button 
-                    onClick={() => deletePost(post.id)}
-                    className="button danger-btn"
-                  >
-                    Delete
-                  </button>
+                  <Link to={`/edit/${post.id}`} className="button secondary-btn">Edit</Link>
+                  <button onClick={() => deletePost(post.id)} className="button danger-btn">Delete</button>
                 </div>
               </div>
 
